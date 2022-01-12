@@ -1,0 +1,26 @@
+version: '2.1'
+services:
+  ghost_download:
+    image: ghost:${VERSION}-alpine
+    container_name: ghost_download
+    volumes:
+      - ${PATH}\ghost\src:/mnt/src
+    command: bash -c "
+      cp -r /var/lib/ghost/versions/${VERSION}/core/built/assets/ghost.min-*.js /mnt/src/ &&
+      cp -r /var/lib/ghost/versions/${VERSION}/core/built/assets/vendor.min-*.js /mnt/src/ &&
+      cp -r /var/lib/ghost/versions/${VERSION}/core/frontend/helpers/tpl/content-cta.hbs /mnt/src/ &&
+      cp -r /var/lib/ghost/versions/${VERSION}/core/server/views/maintenance.html /mnt/src/ &&
+      cp -r /var/lib/ghost/versions/${VERSION}/core/server/models/user.js /mnt/src/ &&
+      cp -r /var/lib/ghost/versions/${VERSION}/core/server/services/mail/GhostMailer.js /mnt/src/ &&
+      cp -r /var/lib/ghost/versions/${VERSION}/core/server/services/members/api.js /mnt/src/ &&
+      mkdir /mnt/src/emails &&
+      cp -r /var/lib/ghost/versions/${VERSION}/core/server/services/members/emails/* /mnt/src/emails/"
+  golang:
+    build: ./golang
+    container_name: golang
+    volumes: 
+      - ${PATH}\ghost\src:/usr/src/app/source
+    depends_on:
+      ghost_download:
+        condition: service_started
+    command: go run main.go

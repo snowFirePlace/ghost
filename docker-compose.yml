@@ -1,0 +1,28 @@
+version: '2.1'
+services:
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      -  ${PATH}\nginx\certificates:/etc/nginx/certificates
+      -  ${PATH}\nginx\conf:/etc/nginx/conf.d
+    links:
+      - ghost
+  ghost:
+    build: 
+      context: ./ghost
+      args:
+        - VERSION=${VERSION}
+    container_name: ghost
+    ports:
+      - 3001:2368
+    volumes:
+      - ${PATH}\db:/var/lib/ghost/content
+    environment:
+      url: ${URL}
+    depends_on:
+      golang:
+        condition: service_started

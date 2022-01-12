@@ -1,1 +1,6 @@
 .vscode
+db/
+ghost/src/
+nginx/
+.dockerignore
+.env

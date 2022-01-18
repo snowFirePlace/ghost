@@ -23,6 +23,3 @@ services:
       - ${PATH}\db:/var/lib/ghost/content
     environment:
       url: ${URL}
-    depends_on:
-      golang:
-        condition: service_started
